@@ -3,12 +3,8 @@
 
 ## Docker 실행
 ```bash
-docker run -it -d --gpus all \
+docker run -it -d \
   --name=whisper-trasncribe-api \
-  -p 5002:8080 \
-  -e WHISPER_MODEL=large-v3 \
-  -e WHISPER_BEAM=1 \
-  -e WHISPER_LANG=ko \
-  -v ./data:/config \
+  -p 5002:8000 \
   ghcr.io/bob-park/whisper-transcribe-api
 ```

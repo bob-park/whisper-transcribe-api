@@ -2,7 +2,6 @@ from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.responses import JSONResponse
 import os
 import tempfile
-import torch
 from faster_whisper import WhisperModel
 import uvicorn
 import logging
@@ -17,15 +16,15 @@ app = FastAPI()
 
 
 def get_models():
-    if torch.cuda.is_available():
-        logger.debug("CUDA device detected")
-        return WhisperModel('large-v3', device="cuda", compute_type="float16")
-    else:
-        logger.debug("Using CPU device")
-        return WhisperModel('medium', device="cpu", compute_type="int8")
+    return WhisperModel('base', device="cpu")
 
 
 model = get_models()
+
+
+@app.get("/health")
+async def health():
+    return {"status": "ok"}
 
 
 @app.post("/transcribe")
