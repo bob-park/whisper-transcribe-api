@@ -1,19 +1,20 @@
-FROM linuxserver/faster-whisper
+FROM linuxserver/faster-whisper AS base
 
-ENV DEBIAN_FRONTEND=noninteractive
+ENV DEBIAN_FRONTEND=noninteractive \
+    PIP_NO_CACHE_DIR=1
+
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y \
-    ffmpeg \
-    git \
-    build-essential \
-    libsndfile1 \
-    && rm -rf /var/lib/apt/lists/*
-
 COPY requirements.txt .
-
 RUN pip install --upgrade pip && \
     pip install -r requirements.txt
+
+# 최종 이미지
+FROM base
+
+ENV PYTHONUNBUFFERED=1
+
+WORKDIR /app
 
 COPY main.py .
 

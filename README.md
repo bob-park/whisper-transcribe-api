@@ -5,14 +5,10 @@
 ```bash
 docker run -it -d --gpus all \
   --name=whisper-trasncribe-api \
-  -e PUID=1000 \
-  -e PGID=1000 \
-  -e TZ=Asia/Seoul \
+  -p 5002:8080 \
   -e WHISPER_MODEL=large-v3 \
   -e WHISPER_BEAM=1 \
   -e WHISPER_LANG=ko \
-  -p 10300:10300 \
-  -p 8080:8080 \
   -v ./data:/config \
   ghcr.io/bob-park/whisper-transcribe-api
 ```
