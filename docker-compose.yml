@@ -1,0 +1,10 @@
+services:
+  whisper-transcribe-api:
+    container_name: whisper-transcribe-api
+    image: ghcr.io/bob-park/whisper-transcribe-api
+    build:
+      dockerfile: ./Dockerfile
+      x-bake:
+        platforms:
+          - linux/amd64
+          - linux/arm64
