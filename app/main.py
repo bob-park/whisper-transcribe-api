@@ -22,7 +22,7 @@ def get_models():
         return WhisperModel('large-v3', device="cuda", compute_type="float16")
     else:
         logger.debug("Using CPU device")
-        return WhisperModel('base', device="cpu", compute_type="int8")
+        return WhisperModel('medium', device="cpu", compute_type="int8")
 
 
 model = get_models()
