@@ -1,6 +1,5 @@
 services:
   whisper-transcribe-api:
-    container_name: whisper-transcribe-api
     image: ghcr.io/bob-park/whisper-transcribe-api
     build:
       dockerfile: ./Dockerfile
