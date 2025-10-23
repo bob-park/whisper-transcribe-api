@@ -16,7 +16,20 @@ app = FastAPI()
 
 
 def get_models():
-    return WhisperModel('base', device="cpu")
+    model_size = os.environ.get("MODEL_SIZE") or 'small'
+    compute_type = os.environ.get("COMPUTE_TYPE") or 'int8'
+    model_path = os.environ.get("MODEL_PATH") or './models'
+
+    absolute_download_path = f"{model_path}/{model_size}"
+
+    logger.debug(f"Loading model {model_size} with compute type {compute_type}")
+    logger.debug(f"Downloading model to {absolute_download_path}")
+
+    return WhisperModel(
+        model_size_or_path=model_size,
+        device="cpu",
+        compute_type=compute_type,
+        download_root=absolute_download_path)
 
 
 model = get_models()
@@ -55,7 +68,3 @@ async def transcribe(file: UploadFile = File(...)):
     os.remove(audio_path)
 
     return JSONResponse(content={"segments": results, "info": info_dict})
-
-
-if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8080)
