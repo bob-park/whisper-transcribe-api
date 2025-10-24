@@ -26,6 +26,11 @@
 | `int8_float16` | 가중치는 int8, 계산은 float16 | 빠름    | 낮음          | 미세 손실 | GPU 최적형         |
 | `int16`        | 16비트 정수                | 중간    | 중간          | 거의 동일 | 일부 CPU 환경용      |
 
+## REST API
+
+### API Docs
+http://localhost:8000/docs
+
 ## Build & Deploy
 
 ### Docker 실행
