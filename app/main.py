@@ -1,12 +1,11 @@
+import logging
+import os
+import tempfile
 from typing import Optional
 
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException
 from fastapi.responses import JSONResponse
-import os
-import tempfile
-from typing import Annotated
 from faster_whisper import WhisperModel
-import logging
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -36,6 +35,8 @@ def get_models():
 
 model = get_models()
 
+language_hint = "이 오디오는 한국어와 영어가 혼용되어 있습니다. 지금부터 받아쓰기를 시작합니다."
+
 
 @app.get("/health")
 async def health():
@@ -43,7 +44,7 @@ async def health():
 
 
 @app.post("/transcribe")
-async def transcribe(file: UploadFile = File(...), lang: Optional[str] = Form(default="ko")):
+async def transcribe(file: UploadFile = File(...)):
     if not file:
         raise HTTPException(status_code=400, detail="No file provided")
 
@@ -52,9 +53,11 @@ async def transcribe(file: UploadFile = File(...), lang: Optional[str] = Form(de
         content = await file.read()
         tmp.write(content)
 
-    segments, info = model.transcribe(audio_path, language=lang, beam_size=5)
-
-    logger.debug(f"lang={lang}, detected_language={info.language}")
+    segments, info = model.transcribe(audio_path,
+                                      beam_size=5,
+                                      initial_prompt=language_hint,
+                                      log_prob_threshold=-0.8,
+                                      no_speech_threshold=0.7)
 
     results = []
     for segment in segments:
