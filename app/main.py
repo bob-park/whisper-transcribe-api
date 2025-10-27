@@ -1,4 +1,4 @@
-from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi import FastAPI, UploadFile, File, Form, HTTPException
 from fastapi.responses import JSONResponse
 import os
 import tempfile
@@ -22,8 +22,8 @@ def get_models():
 
     absolute_download_path = f"{model_path}/{model_size}"
 
-    logger.debug(f"Loading model {model_size} with compute type {compute_type}")
-    logger.debug(f"Downloading model to {absolute_download_path}")
+    logger.info(f"Loading model {model_size} with compute type {compute_type}")
+    logger.info(f"Downloading model to {absolute_download_path}")
 
     return WhisperModel(
         model_size_or_path=model_size,
@@ -41,7 +41,7 @@ async def health():
 
 
 @app.post("/transcribe")
-async def transcribe(file: UploadFile = File(...)):
+async def transcribe(file: UploadFile = File(...), lang: str = Form("ko")):
     if not file:
         raise HTTPException(status_code=400, detail="No file provided")
 
@@ -50,7 +50,9 @@ async def transcribe(file: UploadFile = File(...)):
         content = await file.read()
         tmp.write(content)
 
-    segments, info = model.transcribe(audio_path, beam_size=5)
+    segments, info = model.transcribe(audio_path, language=lang, beam_size=5)
+
+    logger.debug(f"lang={lang}, detected_language={info.language}")
 
     results = []
     for segment in segments:
