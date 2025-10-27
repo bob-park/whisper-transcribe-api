@@ -1,9 +1,11 @@
+from typing import Optional
+
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException
 from fastapi.responses import JSONResponse
 import os
 import tempfile
+from typing import Annotated
 from faster_whisper import WhisperModel
-import uvicorn
 import logging
 
 logging.basicConfig(
@@ -41,7 +43,7 @@ async def health():
 
 
 @app.post("/transcribe")
-async def transcribe(file: UploadFile = File(...), lang: str = Form("ko")):
+async def transcribe(file: UploadFile = File(...), lang: Optional[str] = Form(default="ko")):
     if not file:
         raise HTTPException(status_code=400, detail="No file provided")
 
