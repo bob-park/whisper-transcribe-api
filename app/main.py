@@ -35,8 +35,6 @@ def get_models():
 
 model = get_models()
 
-language_hint = "이 오디오는 한국어와 영어가 혼용되어 있습니다. 지금부터 받아쓰기를 시작합니다."
-
 
 @app.get("/health")
 async def health():
@@ -55,7 +53,6 @@ async def transcribe(file: UploadFile = File(...)):
 
     segments, info = model.transcribe(audio_path,
                                       beam_size=5,
-                                      initial_prompt=language_hint,
                                       log_prob_threshold=-0.8,
                                       no_speech_threshold=0.7)
 
